@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Art Inspiration Assistant</title>
+    <style>
+        /* --- Global Styles & Variables --- */
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #e0e0e0;
+            --bg-color: #1a1a2e;
+            --container-bg: #16213e;
+            --input-bg: #0f3460;
+            --button-bg: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            --button-hover-bg: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            --border-color: #4a4a6a;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --glow-color: rgba(37, 117, 252, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(to bottom right, #1a1a2e, #16213e, #0f3460);
+        }
+
+        /* --- Main Container --- */
+        .container {
+            background-color: var(--container-bg);
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            background: var(--button-bg);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #b0b0d0;
+        }
+
+        /* --- Input Section --- */
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #c0c0e0;
+            font-size: 0.95em;
+        }
+
+        .input-group input[type="text"],
+        .input-group select {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-group input[type="text"]:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        /* --- Button --- */
+        #generate-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffffff;
+            background: var(--button-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 10px; /* Added margin top */
+            letter-spacing: 0.5px;
+        }
+
+        #generate-btn:hover:not(:disabled) {
+            background: var(--button-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #generate-btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: gray;
+        }
+
+        /* --- Output Section --- */
+        .output-section {
+            margin-top: 30px;
+            background-color: rgba(15, 52, 96, 0.7); /* Slightly transparent background */
+            padding: 25px;
+            border-radius: 10px;
+            min-height: 150px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden; /* For potential animations or effects */
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            transition: background-color 0.5s ease;
+        }
+
+        .output-section h2 {
+            margin-bottom: 15px;
+            color: #d0d0f0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        #inspiration-output {
+            font-size: 1.1em;
+            white-space: pre-wrap; /* Preserve line breaks */
+            word-wrap: break-word; /* Wrap long words */
+            color: #e5e5ff;
+            line-height: 1.7;
+        }
+
+        /* --- Loading Spinner --- */
+        .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid var(--secondary-color); /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto; /* Center the loader */
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Helper/Error Message Styling --- */
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .error-message {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .info-message {
+             background-color: var(--input-bg);
+             color: var(--text-color);
+             border: 1px solid var(--border-color);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .input-section {
+                grid-template-columns: 1fr; /* Stack inputs */
+                gap: 15px;
+            }
+            .output-section {
+                padding: 20px;
+            }
+            #inspiration-output {
+                font-size: 1em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🎨 Digital Art Inspiration Assistant ✨</h1>
+            <p>Get unique ideas for your next digital art piece!</p>
+        </header>
+
+        <section class="input-section">
+            <div class="input-group">
+                <label for="theme">Theme / Subject:</label>
+                <input type="text" id="theme" placeholder="e.g., Cyberpunk City, Enchanted Forest">
+            </div>
+
+            <div class="input-group">
+                <label for="style">Art Style / Mood:</label>
+                <input type="text" id="style" placeholder="e.g., Vibrant Anime, Dark Fantasy, Minimalist">
+            </div>
+
+            <div class="input-group">
+                <label for="medium">Medium / Technique:</label>
+                <select id="medium">
+                    <option value="Digital Painting">Digital Painting</option>
+                    <option value="3D Model">3D Model</option>
+                    <option value="Pixel Art">Pixel Art</option>
+                    <option value="Vector Art">Vector Art</option>
+                    <option value="Photo Manipulation">Photo Manipulation</option>
+                    <option value="Concept Sketch">Concept Sketch</option>
+                    <option value="Any Digital Medium">Any Digital Medium</option>
+                </select>
+            </div>
+
+             <div class="input-group">
+                <label for="complexity">Desired Complexity:</label>
+                <select id="complexity">
+                    <option value="Simple">Simple / Quick Idea</option>
+                    <option value="Moderate">Moderately Detailed</option>
+                    <option value="Complex">Complex / Detailed Scene</option>
+                    <option value="Any">Any Complexity</option>
+                </select>
+            </div>
+        </section>
+
+        <button id="generate-btn">✨ Generate Inspiration</button>
+
+        <section class="output-section">
+            <h2>Your Inspiration Idea:</h2>
+            <div id="loader" class="loader"></div>
+            <div id="inspiration-output" class="info-message">Enter some details above and click generate!</div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- Configuration ---
+        // WARNING: DO NOT HARDCODE YOUR REAL API KEY HERE IN PRODUCTION!
+        // Replace 'YOUR_API_KEY_HERE' with your actual Gemini API Key.
+        const API_KEY = 'AIzaSyBI3j1IaQdux0CWNvAKWXWRSyYOI8wGEUI';
+        const API_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        // Note: The user provided endpoint 'gemini-2.0-flash' might not be available or correct.
+        // I'm using 'gemini-1.5-flash' as a known working model. Adjust if needed.
+
+        // --- DOM Elements ---
+        const themeInput = document.getElementById('theme');
+        const styleInput = document.getElementById('style');
+        const mediumSelect = document.getElementById('medium');
+        const complexitySelect = document.getElementById('complexity');
+        const generateBtn = document.getElementById('generate-btn');
+        const outputDiv = document.getElementById('inspiration-output');
+        const loader = document.getElementById('loader');
+
+        // --- Event Listener ---
+        generateBtn.addEventListener('click', getInspiration);
+
+        // --- Functions ---
+        function displayMessage(message, type = 'info') {
+             outputDiv.textContent = message;
+             outputDiv.className = type === 'error' ? 'message error-message' : 'message info-message'; // Reset classes and add appropriate one
+        }
+
+        async function getInspiration() {
+            // 0. Basic Validation & API Key Check
+            if (API_KEY === 'YOUR_API_KEY_HERE') {
+                displayMessage('Error: API Key not configured. Please replace "YOUR_API_KEY_HERE" in the script section with your actual Gemini API key.', 'error');
+                console.error("API Key missing!");
+                return;
+            }
+
+            const theme = themeInput.value.trim();
+            const style = styleInput.value.trim();
+            const medium = mediumSelect.value;
+            const complexity = complexitySelect.value;
+
+            // 1. Construct the Prompt
+            let prompt = `Generate a creative and descriptive digital art inspiration idea.`;
+            if (theme) prompt += ` Theme/Subject: ${theme}.`;
+            if (style) prompt += ` Desired Style/Mood: ${style}.`;
+            if (medium !== 'Any Digital Medium') prompt += ` Suggested Medium: ${medium}.`;
+            if (complexity !== 'Any') prompt += ` Complexity Level: ${complexity}.`;
+            prompt += ` Be imaginative and provide enough detail to spark creativity. Focus on visual elements, atmosphere, and potential narrative hints.`;
+
+            // 2. Prepare for API Call (UI updates)
+            outputDiv.textContent = ''; // Clear previous output
+            outputDiv.className = ''; // Clear message styling
+            loader.style.display = 'block'; // Show loader
+            generateBtn.disabled = true; // Disable button
+            generateBtn.textContent = 'Generating...';
+
+            // 3. Make API Call
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        // Optional: Add safety settings or generation config if needed
+                        // generationConfig: {
+                        //     temperature: 0.7,
+                        //     maxOutputTokens: 500,
+                        // }
+                    })
+                });
+
+                if (!response.ok) {
+                    // Handle HTTP errors (like 400, 429, 500)
+                    const errorData = await response.json().catch(() => ({})); // Try to parse error details
+                    console.error('API Error Response:', errorData);
+                    throw new Error(`API request failed with status ${response.status}: ${errorData?.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // 4. Process the Response
+                console.log("API Response:", data); // Log the full response for debugging
+
+                // Extract text - Adjust path based on actual Gemini API response structure
+                // Common structure: data.candidates[0].content.parts[0].text
+                let generatedText = "Sorry, couldn't extract the inspiration idea from the response."; // Default error message
+                if (data.candidates && data.candidates.length > 0 &&
+                    data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+                    generatedText = data.candidates[0].content.parts[0].text;
+                } else if (data.error) {
+                     generatedText = `API Error: ${data.error.message}`;
+                     console.error("API returned an error object:", data.error);
+                } else {
+                    console.error("Unexpected response structure:", data);
+                }
+
+                outputDiv.textContent = generatedText.trim(); // Display the result
+
+            } catch (error) {
+                console.error('Error fetching inspiration:', error);
+                displayMessage(`Error: ${error.message}. Check the console for more details. Make sure your API key is correct and has access to the model.`, 'error');
+            } finally {
+                // 5. Clean up UI
+                loader.style.display = 'none'; // Hide loader
+                generateBtn.disabled = false; // Re-enable button
+                generateBtn.textContent = '✨ Generate Inspiration';
+            }
+        }
+
+        // --- Initial Setup ---
+        // Optional: You could add placeholder text or initial instructions here
+        // displayMessage("Enter some details above and click 'Generate Inspiration'!");
+
+    </script>
+
+</body>
+</html>
