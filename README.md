@@ -1,1 +1,0 @@
-Art suggestion Assistant
